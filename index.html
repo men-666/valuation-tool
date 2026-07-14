@@ -9,8 +9,6 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <!-- Babel for JSX compilation in browser -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <!-- Lucide Icons CDN -->
-  <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     body {
       margin: 0;
@@ -59,29 +57,50 @@
       return n.toLocaleString("ja-JP", { minimumFractionDigits: digits, maximumFractionDigits: digits });
     }
 
-    // Lucide Icon Wrapper Component
-    function Icon({ name, size = 24, color = "currentColor", style = {} }) {
-      const iconRef = useRef(null);
+    // ---- SVG Icons (Lucide互換のインラインSVG) ----
+    function IconTrendingUp({ size = 24, color = "currentColor" }) {
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+          <polyline points="16 7 22 7 22 13" />
+        </svg>
+      );
+    }
 
-      useEffect(() => {
-        if (iconRef.current) {
-          iconRef.current.innerHTML = '';
-          const svg = lucide.createSvgElement({
-            name: name,
-            attrs: {
-              width: size,
-              height: size,
-              stroke: color,
-              'stroke-width': 2,
-              'stroke-linecap': 'round',
-              'stroke-linejoin': 'round',
-            }
-          });
-          iconRef.current.appendChild(svg);
-        }
-      }, [name, size, color]);
+    function IconTarget({ size = 24, color = "currentColor" }) {
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <circle cx="12" cy="12" r="6" />
+          <circle cx="12" cy="12" r="2" />
+        </svg>
+      );
+    }
 
-      return <span ref={iconRef} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', ...style }} />;
+    function IconArrowLeft({ size = 24, color = "currentColor" }) {
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12" />
+          <polyline points="12 19 5 12 12 5" />
+        </svg>
+      );
+    }
+
+    function IconRotateCcw({ size = 24, color = "currentColor" }) {
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+          <polyline points="3 3 3 8 8 8" />
+        </svg>
+      );
+    }
+
+    function IconChevronDown({ size = 24, color = "currentColor" }) {
+      return (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      );
     }
 
     // ---- Count-up number ----
@@ -233,7 +252,9 @@
                 ))}
                 <option value="__custom">カスタム…</option>
               </select>
-              <Icon name="chevron-down" size={16} color={C.sub} style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none" }} />
+              <div style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", display: "flex", alignItems: "center" }}>
+                <IconChevronDown size={16} color={C.sub} />
+              </div>
             </div>
             {mode === "custom" && (
               <div style={{ display: "flex", alignItems: "center", border: `1.5px solid ${C.line}`, borderRadius: 10, background: "#fff", flex: 1 }}>
@@ -255,8 +276,8 @@
     }
 
     function ValuationTool() {
-      const [screen, setScreen] = useState("home"); // home | input | result
-      const [mode, setMode] = useState(null); // 'growth' | 'return'
+      const [screen, setScreen] = useState("home");
+      const [mode, setMode] = useState(null);
 
       useEffect(() => {
         if (document.getElementById("vt-font-link")) return;
@@ -404,11 +425,10 @@
                     display: "flex",
                     alignItems: "center",
                     gap: 16,
-                    transition: "border-color 0.15s, transform 0.15s",
                   }}
                 >
                   <div style={{ width: 48, height: 48, borderRadius: 12, background: C.blue, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <Icon name="trending-up" color="#fff" size={24} />
+                    <IconTrendingUp color="#fff" size={24} />
                   </div>
                   <div>
                     <div style={{ fontWeight: 800, fontSize: 17, color: C.navy }}>インプライド成長率</div>
@@ -432,7 +452,7 @@
                   }}
                 >
                   <div style={{ width: 48, height: 48, borderRadius: 12, background: C.gold, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <Icon name="target" color="#fff" size={24} />
+                    <IconTarget color="#fff" size={24} />
                   </div>
                   <div>
                     <div style={{ fontWeight: 800, fontSize: 17, color: C.navy }}>インプライド期待リターン</div>
@@ -447,12 +467,12 @@
             {screen === "input" && (
               <div>
                 <button onClick={goHome} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", color: C.sub, fontSize: 14, cursor: "pointer", padding: 0, marginBottom: 20 }}>
-                  <Icon name="arrow-left" size={16} color={C.sub} /> はじめに戻る
+                  <IconArrowLeft size={16} color={C.sub} /> はじめに戻る
                 </button>
 
                 <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 24 }}>
                   <div style={{ width: 36, height: 36, borderRadius: 10, background: accent, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    {isGrowth ? <Icon name="trending-up" color="#fff" size={18} /> : <Icon name="target" color="#fff" size={18} />}
+                    {isGrowth ? <IconTrendingUp color="#fff" size={18} /> : <IconTarget color="#fff" size={18} />}
                   </div>
                   <h2 style={{ fontSize: 19, fontWeight: 800, color: C.navy, margin: 0 }}>
                     {isGrowth ? "インプライド成長率" : "インプライド期待リターン"}
@@ -530,7 +550,7 @@
             {screen === "result" && result && (
               <div>
                 <button onClick={() => setScreen("input")} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", color: C.sub, fontSize: 14, cursor: "pointer", padding: 0, marginBottom: 20 }}>
-                  <Icon name="arrow-left" size={16} color={C.sub} /> 数値を修正する
+                  <IconArrowLeft size={16} color={C.sub} /> 数値を修正する
                 </button>
 
                 <div className="vt-result-layout">
@@ -630,7 +650,7 @@
                     boxSizing: "border-box"
                   }}
                 >
-                  <Icon name="refresh-cw" size={16} color={C.navy} /> 最初からやり直す
+                  <IconRotateCcw size={16} color={C.navy} /> 最初からやり直す
                 </button>
               </div>
             )}
