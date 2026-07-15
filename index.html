@@ -78,32 +78,6 @@
       );
     }
 
-    function IconArrowLeft({ size = 20, color = "currentColor" }) {
-      return (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="19" y1="12" x2="5" y2="12" />
-          <polyline points="12 19 5 12 12 5" />
-        </svg>
-      );
-    }
-
-    function IconRotateCcw({ size = 20, color = "currentColor" }) {
-      return (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-          <polyline points="3 3 3 8 8 8" />
-        </svg>
-      );
-    }
-
-    function IconChevronDown({ size = 20, color = "currentColor" }) {
-      return (
-        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="6 9 12 15 18 9" />
-        </svg>
-      );
-    }
-
     // ---- Count-up number ----
     function TickerNumber({ value, suffix, digits, big, color }) {
       const [display, setDisplay] = useState(0);
@@ -116,7 +90,7 @@
         const to = value;
         function tick(now) {
           const t = Math.min(1, (now - start) / duration);
-          const eased = 1 - Math.pow(1 - t, 4); // クインティックスムース
+          const eased = 1 - Math.pow(1 - t, 4);
           setDisplay(from + (to - from) * eased);
           if (t < 1) raf.current = requestAnimationFrame(tick);
         }
@@ -137,7 +111,7 @@
           }}
         >
           {fmt(display, digits)}
-          <span style={{ fontSize: "0.45em", marginLeft: 8, color: C.sub, fontFamily: FONT, fontWeight: 700 }}>
+          <span style={{ fontSize: "0.45em", marginLeft: 8, color: color || C.ink, fontFamily: FONT, fontWeight: 700 }}>
             {suffix}
           </span>
         </span>
@@ -223,7 +197,7 @@
                 <option value="__custom" style={{ background: C.bg }}>CUSTOM (手入力)...</option>
               </select>
               <div style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", display: "flex", alignItems: "center" }}>
-                <IconChevronDown size={16} color={C.sub} />
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={C.sub} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
               </div>
             </div>
             {mode === "custom" && (
@@ -300,10 +274,10 @@
           const g = r - RE1 / (P0 - B0);
           setResult({
             ROCE, RE1, r, g,
-            headline: 1 + g,
-            headlineSuffix: "",
-            headlineDigits: 3,
-            subHeadline: `IMPLIED GROWTH RATE: ${fmt(g * 100, 2)}%`,
+            headline: g * 100,               // パーセント値をメインに
+            headlineSuffix: "%",
+            headlineDigits: 2,
+            subHeadline: `IMPLIED GROWTH MULTIPLIER: ${fmt(1 + g, 3)} (1 + g)`, // 倍率はサブに
           });
         } else {
           const g = parseFloat(rate) / 100;
@@ -315,7 +289,7 @@
           const r = (ROCE + k * g) / (k + 1);
           setResult({
             ROCE, k, g, r,
-            headline: r * 100,
+            headline: r * 100,               // 要求リターンもパーセントがメイン
             headlineSuffix: "%",
             headlineDigits: 2,
             subHeadline: `PRICE-TO-BOOK RATIO: ${fmt(P0 / B0, 2)}x`,
@@ -357,7 +331,7 @@
               padding: 24px;
               cursor: pointer;
               display: flex;
-              alignItems: center;
+              align-items: center;
               gap: 20px;
               transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
               box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -436,7 +410,7 @@
             {screen === "input" && (
               <div>
                 <button onClick={goHome} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.sub, fontSize: 13, cursor: "pointer", padding: 0, marginBottom: 28, letterSpacing: "0.05em", fontWeight: 700 }}>
-                  <IconArrowLeft size={14} color={C.sub} /> RETURN TO GATEWAY
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.sub} strokeWidth="2.5"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg> RETURN TO GATEWAY
                 </button>
 
                 <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 28 }}>
@@ -526,7 +500,7 @@
             {screen === "result" && result && (
               <div>
                 <button onClick={() => setScreen("input")} style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", color: C.sub, fontSize: 13, cursor: "pointer", padding: 0, marginBottom: 28, fontWeight: 700 }}>
-                  <IconArrowLeft size={14} color={C.sub} /> ADJUST COEFFICIENTS
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.sub} strokeWidth="2.5"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg> ADJUST COEFFICIENTS
                 </button>
 
                 <div className="vt-result-layout">
@@ -545,14 +519,14 @@
                     }}
                   >
                     <div style={{ fontSize: 12, letterSpacing: "0.25em", color: colorAccent, fontWeight: 900, marginBottom: 16 }}>
-                      {isGrowth ? "IMPLIED MULTIPLIER RESULT" : "EXPECTED RETURN VECTOR"}
+                      {isGrowth ? "IMPLIED GROWTH VECTOR" : "EXPECTED RETURN VECTOR"}
                     </div>
                     {reveal ? (
                       <TickerNumber value={result.headline} suffix={result.headlineSuffix} digits={result.headlineDigits} big color={colorAccent} />
                     ) : (
                       <div style={{ height: "4.5rem" }} />
                     )}
-                    <div style={{ marginTop: 18, fontSize: 15, color: C.ink, fontWeight: 700, fontFamily: MONO, opacity: reveal ? 1 : 0, transition: "opacity 0.4s ease 0.8s", letterSpacing: "0.05em" }}>
+                    <div style={{ marginTop: 18, fontSize: 14, color: C.ink, fontWeight: 700, fontFamily: MONO, opacity: reveal ? 1 : 0, transition: "opacity 0.4s ease 0.8s", letterSpacing: "0.05em" }}>
                       {result.subHeadline}
                     </div>
                     <div
@@ -631,7 +605,7 @@
                   onMouseEnter={(e) => e.currentTarget.style.borderColor = C.ink}
                   onMouseLeave={(e) => e.currentTarget.style.borderColor = C.line}
                 >
-                  <IconRotateCcw size={15} color={C.ink} /> RESET QUANTITATIVE CORE
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={C.ink} strokeWidth="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><polyline points="3 3 3 8 8 8" /></svg> RESET QUANTITATIVE CORE
                 </button>
               </div>
             )}
